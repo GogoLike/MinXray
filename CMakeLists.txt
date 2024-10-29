@@ -25,6 +25,39 @@ set(PROJECT_UIS
 add_executable(min-xray ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_UIS})
 target_link_libraries(min-xray PRIVATE Qt6::Core Qt6::Widgets)
 
+# Xray-core build with Makefile
+set(XRAY_CORE_DIR ${CMAKE_SOURCE_DIR}/xray-core)
+
+find_program(go_executable "go")
+
+if(go_executable)
+    set(GO_EXECUTABLE ${go_executable})
+else()
+    message(FATAL_ERROR "Go: ${GO_EXECUTABLE} not found! Aborting")
+endif()
+
+if(WIN32)
+  set(XRAY_CORE_TARGET xray.exe)
+  set(XRAY_CORE_BUILD_ENV $env:CGO_ENABLED=0)
+else()
+  set(XRAY_CORE_TARGET xray)
+  set(XRAY_CORE_BUILD_ENV CGO_ENABLED=0)
+endif()
+
+add_custom_target(xray-core-build
+    COMMAND
+      ${GO_EXECUTABLE}
+      build
+      -o ${XRAY_CORE_TARGET}
+      -trimpath
+      -ldflags "-s -w -buildid="
+      ./main
+      &&
+      mv ./${XRAY_CORE_TARGET} ${CMAKE_BINARY_DIR}/${XRAY_CORE_TARGET}
+    WORKING_DIRECTORY
+      ${XRAY_CORE_DIR}
+)
+
 # CI PATH
 foreach(ci_source ${PROJECT_SOURCES})
     get_filename_component(ci_source ${ci_source} ABSOLUTE)
@@ -55,11 +88,7 @@ add_custom_target(min-xray-cppcheck
       ${ci_sources}
     WORKING_DIRECTORY
       ${CMAKE_SOURCE_DIR}
-    COMMENT
-      "Check min-xray with ${CPPCHECK_EXECUTABLE} ..."
 )
-
-add_dependencies(min-xray min-xray-cppcheck)
 
 # Clang-Format
 find_program(clangformat_executable clang-format)
@@ -78,8 +107,9 @@ add_custom_target(min-xray-clangformat
       ${ci_sources}
     WORKING_DIRECTORY
       ${CMAKE_SOURCE_DIR}
-    COMMENT
-      "Formatting min-xray with ${CLANGFORMAT_EXECUTABLE} ..."
 )
 
-add_dependencies(min-xray min-xray-clangformat)
+# Deps hierarchy
+
+add_dependencies(min-xray xray-core-build)
+add_dependencies(xray-core-build min-xray-clangformat min-xray-cppcheck)
