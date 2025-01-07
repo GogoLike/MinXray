@@ -1,25 +1,29 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-//! Qt specific includes
-// cppcheck-suppress missingIncludeSystem
+#include "config_parser.h"
+
+#include <QFileDialog>
 #include <QMainWindow>
 
 //! Qt specific macro
 // cppcheck-suppress unknownMacro
 QT_BEGIN_NAMESPACE
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
-public:
-  explicit MainWindow(QWidget* parent = nullptr);
-  ~MainWindow();
-
 private:
-  Ui::MainWindow* ui;
+    Ui::MainWindow *ui;
+    QFileDialog *config_search;
+    XrayConfig *config;
+
+public:
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 };
 #endif // MAINWINDOW_H
