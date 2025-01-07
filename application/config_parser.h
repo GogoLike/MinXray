@@ -28,7 +28,6 @@ class XrayConfig : public QObject
 
 public:
     explicit XrayConfig();
-    virtual ~XrayConfig(){};
 
     QStringList get_save_configs();
     void choose_config(QString config_name);

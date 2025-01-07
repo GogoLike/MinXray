@@ -10,7 +10,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 set(CMAKE_AUTOUIC ON) # Enable build for ui files
 set(CMAKE_AUTOMOC ON) # Enable moc preprocessor for macro as Q_OBJECT
 
-set(XRAY_BASE_CONFIG_PATH "base_config.json")
+# set(XRAY_BASE_CONFIG_PATH "base_config.json")
 
 set(PROJECT_SOURCES
         application/main.cpp
@@ -29,10 +29,10 @@ set(PROJECT_UIS
 
 add_executable(min-xray ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${PROJECT_UIS})
 target_link_libraries(min-xray PRIVATE Qt6::Core Qt6::Widgets)
-target_compile_definitions(min-xray
-                            PUBLIC
-                            XRAY_BASE_CONFIG_PATH="${XRAY_BASE_CONFIG_PATH}"
-                          )
+# target_compile_definitions(min-xray
+#                             PUBLIC
+#                             XRAY_BASE_CONFIG_PATH="${XRAY_BASE_CONFIG_PATH}"
+#                           )
 
 # Xray-core build with Makefile
 set(XRAY_CORE_DIR ${CMAKE_SOURCE_DIR}/xray-core)

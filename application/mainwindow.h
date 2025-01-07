@@ -3,6 +3,8 @@
 
 #include "config_parser.h"
 
+#include <memory>
+
 #include <QFileDialog>
 #include <QMainWindow>
 
@@ -19,8 +21,9 @@ class MainWindow : public QMainWindow
 {
 private:
     Ui::MainWindow *ui;
-    QFileDialog *config_search;
-    XrayConfig *config;
+
+    std::unique_ptr<XrayConfig> config;
+    std::unique_ptr<QFileDialog> config_search;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);

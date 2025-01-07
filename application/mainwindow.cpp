@@ -8,20 +8,18 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    config = new XrayConfig();
-    config_search = new QFileDialog();
+    config.reset(new XrayConfig());
+    config_search.reset(new QFileDialog());
 
     connect(this->ui->action_close, &QAction::triggered, this,
             &QMainWindow::close);
     connect(this->ui->action_import_config, SIGNAL(triggered(bool)),
-            this->config_search, SLOT(open()));
-    connect(this->config_search, &QFileDialog::fileSelected, this->config,
-            &XrayConfig::import_config);
+            this->config_search.get(), SLOT(open()));
+    connect(this->config_search.get(), &QFileDialog::fileSelected,
+            this->config.get(), &XrayConfig::import_config);
 }
 
 MainWindow::~MainWindow()
 {
-    delete config;
-    delete config_search;
     delete ui;
 }
